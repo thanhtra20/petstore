@@ -24,7 +24,9 @@ public class PetController {
     @GetMapping("/get-all")
     public ResponseEntity getPets(){
         logger.info("getAll");
+        logger.debug("abbxbxbbc");
         List<MyPet> myPets = petService.getAllPets();
+        logger.debug(myPets.get(0).getName());
         return ResponseEntity.ok(myPets);
 
     }
