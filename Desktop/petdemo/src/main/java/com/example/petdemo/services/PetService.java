@@ -1,29 +1,23 @@
 package com.example.petdemo.services;
 
-import com.example.petdemo.models.Animal;
+import com.example.petdemo.exception.EmptyInputException;
 import com.example.petdemo.models.MyPet;
 import invalidPackageName.ApiClient;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import test.PetApi;
-import test.model.Pet;
 import com.example.petdemo.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class PetService {
     @Autowired
     private PetRepository petRepository;
 
-    public MyPet addPet(MyPet myPet) throws NoSuchElementException {
+    public MyPet addPet(MyPet myPet)  {
 //        RestTemplate restTemplate = new RestTemplate();
 //
 //        RestTemplate restTemplate = new RestTemplate();
@@ -56,7 +50,11 @@ public class PetService {
 //        if (animal.getType().equals("dog")) {
 //            return this.petRepository.save(MyPet.fromAnimal(animal));
 //        }
-        return this.petRepository.save(myPet);
+        if (myPet.getName().isEmpty() || myPet.getName().length() == 0){
+            throw new EmptyInputException("601", "Input is empty.");
+        }
+        return petRepository.save(myPet);
+
     }
 
 
@@ -72,9 +70,16 @@ public class PetService {
     }
 
     public List<MyPet> getAllPets() {
-        return  this.petRepository.findAll();
+        List<MyPet> pets = petRepository.findAll();
+        if (pets.isEmpty())
+            throw new EmptyInputException("601", "The list is empty");
+        return pets;
 
     }
+
+//    public List<MyPet> getAllPetsWithError() {
+//        throw new IllegalArgumentException();
+//    }
 
     public MyPet getPetById(Integer id) {
        return this.petRepository.getById(id);
